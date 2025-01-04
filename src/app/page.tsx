@@ -5,30 +5,80 @@ import { motion, AnimatePresence } from 'framer-motion'
 import RichTextEditor from '@/components/RichTextEditor'
 
 // Sample data for demo
-const SAMPLE_EMAIL = `Hi, let's discuss the project timeline and budget. The deadline is next Friday, and we need approval for the $10,000 budget.`
+interface Email {
+  from: string;
+  to: string;
+  date: string;
+  subject: string;
+  body: string;
+}
+
+const SAMPLE_EMAIL: Email = {
+  from: "**From:** Jordan Lee <jordan.lee@company.com>",
+  to: "**To:** Alex <alex@company.com>",
+  date: "**Date:** Monday, February 27, 2023",
+  subject: "**Subject:** Quick Update on the Project",
+  body: `Hi Alex,
+
+I hope you're doing well! It's been a busy week on our end, but I wanted to touch base on a few things regarding the **website redesign project**. I know you've been juggling a lot lately, so I appreciate you taking the time to look into this.
+
+First, we're approaching the **March 15th deadline**, and I wanted to check in to see if we're still on track. If there are any hiccups, let's address them sooner rather than later—I'd hate for us to be scrambling at the last minute. Also, the finance team mentioned they're reviewing the **$12,500 budget** we proposed. Have you heard anything from them? I know budgets can be a bit of a headache, so I'm happy to help nudge things along if needed.
+
+On another note, the client has been really enthusiastic about the progress so far, which is great! They've asked for a **mid-project review meeting**, and I was thinking **Wednesday, March 8th** might work. Let me know if that fits your schedule. Oh, and one last thing—we're running a bit lean on resources, so I was wondering if we could bring in **three more team members** starting **next Monday**. I know it's a bit of an ask, but it would really help us stay on track without burning out the current team.
+
+Thanks so much for your help with all of this, Alex. I know it's a lot, but I really appreciate how proactive you've been throughout the project. Let me know if there's anything I can do to make things easier on your end!
+
+Best regards,\nJordan Lee\nProject Manager`
+}
 
 const SAMPLE_KEY_POINTS = [
-  'Discuss project timeline',
-  'Budget approval required',
+  '**Project Timeline**: Confirm if the project is on track for the **March 15th deadline**.',
+  '**Budget Approval**: Check if the **$12,500 budget** has been approved by the finance team.',
+  '**Resource Allocation**: Request **three additional team members** starting **next Monday** to avoid overworking the current team.',
+  '**Client Feedback**: Schedule a **mid-project review meeting** with the client for **Wednesday, March 8th**.'
 ]
 
 const SAMPLE_QUESTIONS = [
   {
-    question: 'What is the expected project deadline?',
+    question: 'Are we on track to meet the March 15th deadline?',
     suggestions: [
-      'The deadline is next Friday.',
-      'We are targeting the end of this month.',
-      'The timeline is still being finalized.',
+      'Yes, we\'re on track to meet the deadline.',
+      'We\'re slightly behind due to [reason], but we can catch up by [action].',
+      'We\'ll need to adjust the deadline to [new date].',
     ],
   },
   {
-    question: 'Has the budget been approved?',
+    question: 'Has the finance team approved the $12,500 budget?',
     suggestions: [
       'Yes, the budget has been approved.',
-      'No, we are still waiting for approval.',
-      'The budget is under review.',
+      'No, the budget is still under review.',
+      'The budget has been approved, but with some adjustments.',
     ],
   },
+  {
+    question: 'Can we allocate three more team members to the project starting next Monday?',
+    suggestions: [
+      'Yes, I\'ll arrange for the additional team members.',
+      'No, but we can [alternative solution].',
+      'Let\'s discuss this further in our next meeting.',
+    ],
+  },
+  {
+    question: 'Does Wednesday, March 8th work for the mid-project review meeting?',
+    suggestions: [
+      'Yes, that works for me.',
+      'No, how about [alternative date]?',
+      'Let me check my schedule and get back to you.',
+    ],
+  },
+  {
+    question: 'Is there anything else you need from me to help move things forward?',
+    suggestions: [
+      'No, everything looks good for now.',
+      'Yes, I need [specific help].',
+      'Let\'s touch base later this week to discuss further.',
+    ],
+  }
 ]
 
 const fadeInUp = {
@@ -39,7 +89,16 @@ const fadeInUp = {
 }
 
 export default function Home() {
-  const [email, setEmail] = useState(SAMPLE_EMAIL)
+  const [email, setEmail] = useState(() => {
+    const content = SAMPLE_EMAIL.body;
+    return content.split(/\n\n/).map(paragraph => {
+      // Handle signature part differently
+      if (paragraph.includes('Best regards')) {
+        return paragraph.split(/\n/).map(line => `<p>${line}</p>`).join('');
+      }
+      return `<p>${paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
+    }).join('');
+  })
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isGeneratingReply, setIsGeneratingReply] = useState(false)
   const [showResults, setShowResults] = useState(false)
@@ -100,116 +159,116 @@ ${answeredQuestions.map(qa => `<p>Regarding ${qa.question.toLowerCase()}: ${qa.a
   }
 
   return (
-    <div className="space-y-8">
-      <motion.header 
-        className="text-center"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-4xl font-bold mb-2">
-          AI-Pencil <span className="text-blue-600 inline-block hover:scale-110 transition-transform">✍️</span>
-        </h1>
-        <p className="text-gray-600">Your AI-powered email assistant</p>
-      </motion.header>
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4">
+      {/* App Container */}
+      <div className="w-full max-w-4xl bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+        {/* Header */}
+        <div className="bg-blue-600 p-6">
+          <h1 className="text-3xl font-bold text-white">✉️ ai-penci</h1>
+          <p className="text-gray-200 mt-2">Your AI-powered email assistant</p>
+        </div>
 
-      <motion.section 
-        className="space-y-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h2 className="text-2xl font-semibold flex items-center gap-2">
-          Incoming Email <span className="text-gray-400 hover:scale-110 transition-transform">📧</span>
-        </h2>
-        <RichTextEditor
-          content={email}
-          onChange={setEmail}
-          placeholder="Paste or type your email here..."
-        />
-        <motion.button
-          onClick={handleAnalyze}
-          disabled={isAnalyzing}
-          className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 hover:shadow-lg"
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-        >
-          {isAnalyzing ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="animate-spin">🤖</span> Analyzing...
-            </span>
-          ) : (
-            <span className="flex items-center justify-center gap-2">
-              <span>🔍</span> Analyze Email
-            </span>
-          )}
-        </motion.button>
-      </motion.section>
+        {/* Main Content */}
+        <div className="p-6">
+          {/* Rich Text Area for Incoming Email */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-200 mb-4">📧 Paste Your Email</h2>
+            <RichTextEditor
+              content={email}
+              onChange={setEmail}
+              placeholder="Paste or type your email here..."
+              editable={true}
+              className="bg-gray-700 text-white border-gray-600 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-      <AnimatePresence mode="wait">
-        {showResults && (
-          <motion.div
-            {...fadeInUp}
-            className="space-y-8"
+          {/* Generate Key Points Button */}
+          <button
+            onClick={handleAnalyze}
+            disabled={isAnalyzing}
+            className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 mb-8 flex items-center justify-center"
           >
-            <section className="space-y-4">
-              <h2 className="text-2xl font-semibold flex items-center gap-2">
-                Key Points <span className="text-gray-400 hover:scale-110 transition-transform">🔍</span>
-              </h2>
-              <ul className="list-disc pl-5 space-y-2">
-                {SAMPLE_KEY_POINTS.map((point, index) => (
-                  <motion.li
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.2 }}
-                    className="hover:text-blue-600 transition-colors cursor-default"
-                  >
-                    {point}
-                  </motion.li>
-                ))}
-              </ul>
-            </section>
+            {isAnalyzing ? (
+              <span className="flex items-center gap-2">
+                <span className="animate-spin">🛠️</span> Analyzing...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <span>🧩</span> Generate Key Points
+              </span>
+            )}
+          </button>
 
-            <section className="space-y-4">
-              <h2 className="text-2xl font-semibold flex items-center gap-2">
-                Questions <span className="text-gray-400 hover:scale-110 transition-transform">❓</span>
-              </h2>
-              <div className="space-y-6">
-                {SAMPLE_QUESTIONS.map((q, qIndex) => (
-                  <motion.div
-                    key={qIndex}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: qIndex * 0.2 }}
-                    className="space-y-2"
-                  >
-                    <p className="font-medium">{q.question}</p>
-                    <div className="grid gap-2">
-                      {q.suggestions.map((suggestion, sIndex) => (
-                        <motion.button
-                          key={sIndex}
-                          onClick={() => {
-                            const newAnswers = [...selectedAnswers]
-                            newAnswers[qIndex] = suggestion
-                            setSelectedAnswers(newAnswers)
-                            // Reset custom answer when selecting a suggestion
-                            const newIsCustom = [...isCustomAnswer]
-                            newIsCustom[qIndex] = false
-                            setIsCustomAnswer(newIsCustom)
-                          }}
-                          className={`p-3 text-left border rounded-lg transition-all ${
-                            selectedAnswers[qIndex] === suggestion && !isCustomAnswer[qIndex]
-                              ? 'border-blue-500 bg-blue-50 shadow-sm'
-                              : 'border-gray-200 hover:border-blue-300 hover:shadow-sm'
-                          }`}
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                        >
-                          {suggestion}
-                        </motion.button>
-                      ))}
-                      <div className="relative">
+          {/* Key Points Section */}
+          <AnimatePresence>
+            {showResults && (
+              <motion.div
+                {...fadeInUp}
+                className="mb-8"
+              >
+                <h2 className="text-xl font-semibold text-gray-200 mb-4">🔍 Key Points</h2>
+                <div className="space-y-4">
+                  {SAMPLE_KEY_POINTS.map((point, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.2 }}
+                      className="p-4 bg-gray-700 rounded-lg animate-fade-in"
+                    >
+                      <p 
+                        className="text-gray-200"
+                        dangerouslySetInnerHTML={{
+                          __html: point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        }}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Questions & Suggested Answers Section */}
+          <AnimatePresence>
+            {showResults && (
+              <motion.div
+                {...fadeInUp}
+                className="mb-8"
+              >
+                <h2 className="text-xl font-semibold text-gray-200 mb-4">❓ Questions & Suggested Answers</h2>
+                <div className="space-y-4">
+                  {SAMPLE_QUESTIONS.map((q, qIndex) => (
+                    <motion.div
+                      key={qIndex}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: qIndex * 0.2 }}
+                      className="p-4 bg-gray-700 rounded-lg animate-fade-in"
+                    >
+                      <p className="text-gray-200 font-semibold">{q.question}</p>
+                      <div className="mt-2 space-y-2">
+                        {q.suggestions.map((suggestion, sIndex) => (
+                          <button
+                            key={sIndex}
+                            onClick={() => {
+                              const newAnswers = [...selectedAnswers]
+                              newAnswers[qIndex] = suggestion
+                              setSelectedAnswers(newAnswers)
+                              // Reset custom answer when selecting a suggestion
+                              const newIsCustom = [...isCustomAnswer]
+                              newIsCustom[qIndex] = false
+                              setIsCustomAnswer(newIsCustom)
+                            }}
+                            className={`w-full text-left p-2 rounded-lg transition-all ${
+                              selectedAnswers[qIndex] === suggestion && !isCustomAnswer[qIndex]
+                                ? 'bg-blue-600 text-white border-2 border-blue-400 shadow-md'
+                                : 'bg-gray-600 text-white border border-gray-500 hover:bg-gray-500'
+                            }`}
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
                         <input
                           type="text"
                           placeholder="Or type your custom answer..."
@@ -225,70 +284,52 @@ ${answeredQuestions.map(qa => `<p>Regarding ${qa.question.toLowerCase()}: ${qa.a
                               setIsCustomAnswer(newIsCustom)
                             }
                           }}
-                          className={`w-full p-3 border rounded-lg transition-all outline-none ${
-                            isCustomAnswer[qIndex]
-                              ? 'border-blue-500 bg-blue-50 shadow-sm'
-                              : 'border-gray-200 hover:border-blue-300 focus:border-blue-500 focus:shadow-sm'
-                          }`}
+                          className="w-full p-2 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </section>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            <section className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                  Generated Reply <span className="text-gray-400 hover:scale-110 transition-transform">✉️</span>
-                </h2>
-                <motion.button
-                  onClick={generateReply}
-                  disabled={isGeneratingReply}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 hover:shadow-lg flex items-center gap-2"
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                >
-                  {isGeneratingReply ? (
-                    <>
-                      <span className="animate-spin">🤖</span>
-                      <span>Generating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>✨</span>
-                      <span>Generate Reply</span>
-                    </>
-                  )}
-                </motion.button>
-              </div>
-              <div className="relative">
+          {/* Generate Reply Button */}
+          <button
+            onClick={generateReply}
+            disabled={isGeneratingReply}
+            className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 mb-8 flex items-center justify-center"
+          >
+            {isGeneratingReply ? (
+              <span className="flex items-center gap-2">
+                <span className="animate-spin">🛠️</span> Generating...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <span>✍️</span> Generate Reply
+              </span>
+            )}
+          </button>
+
+          {/* Reply Section */}
+          <AnimatePresence>
+            {showResults && (
+              <motion.div
+                {...fadeInUp}
+              >
+                <h2 className="text-xl font-semibold text-gray-200 mb-4">📝 Draft Reply</h2>
                 <RichTextEditor
                   content={reply}
                   onChange={setReply}
                   editable={false}
-                  placeholder="Click 'Generate Reply' after selecting or typing your answers..."
+                  placeholder="Your AI-generated reply will appear here..."
+                  className="w-full p-4 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {reply && (
-                  <div className="absolute top-2 right-2">
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(reply.replace(/<[^>]*>/g, ''))
-                        // You could add a toast notification here
-                      }}
-                      className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                      title="Copy to clipboard"
-                    >
-                      📋
-                    </button>
-                  </div>
-                )}
-              </div>
-            </section>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   )
 }
