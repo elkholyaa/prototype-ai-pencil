@@ -1,23 +1,23 @@
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Bold from '@tiptap/extension-bold'
-import Italic from '@tiptap/extension-italic'
-import Underline from '@tiptap/extension-underline'
-import BulletList from '@tiptap/extension-bullet-list'
-import { type Editor } from '@tiptap/core'
-import { useEffect, useState } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Bold from '@tiptap/extension-bold';
+import Italic from '@tiptap/extension-italic';
+import Underline from '@tiptap/extension-underline';
+import BulletList from '@tiptap/extension-bullet-list';
+import { type Editor } from '@tiptap/core';
+import { useEffect, useState } from 'react';
 
 interface RichTextEditorProps {
-  content: string
-  onChange?: (content: string) => void
-  placeholder?: string
-  editable?: boolean
-  className?: string // Add className prop
+  content: string;
+  onChange?: (content: string) => void;
+  placeholder?: string;
+  editable?: boolean;
+  className?: string; // Add className prop
 }
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) {
-    return null
+    return null;
   }
 
   return (
@@ -59,8 +59,8 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <span className="text-white">•</span>
       </button>
     </div>
-  )
-}
+  );
+};
 
 export default function RichTextEditor({
   content,
@@ -69,18 +69,18 @@ export default function RichTextEditor({
   editable = true,
   className = '', // Default to empty string
 }: RichTextEditorProps) {
-  const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    setIsMounted(true);
+  }, []);
 
   const editor = useEditor({
     extensions: [StarterKit, Bold, Italic, Underline, BulletList],
     content,
     editable,
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML())
+      onChange?.(editor.getHTML());
     },
     editorProps: {
       attributes: {
@@ -90,31 +90,29 @@ export default function RichTextEditor({
         'data-placeholder': placeholder,
       },
     },
-    parseOptions: {
-      preserveWhitespace: 'full',
-    },
-    immediatelyRender: false,
-  })
+  });
 
   // Update content when it changes externally
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content)
+      editor.commands.setContent(content);
     }
-  }, [content, editor])
+  }, [content, editor]);
 
   if (!isMounted) {
     return (
       <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-700 animate-pulse">
         <div className="h-[250px]"></div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className={`border border-gray-600 rounded-lg overflow-hidden bg-gray-700 shadow-sm hover:shadow transition-shadow ${className}`}>
+    <div
+      className={`border border-gray-600 rounded-lg overflow-hidden bg-gray-700 shadow-sm hover:shadow transition-shadow ${className}`}
+    >
       {editable && <MenuBar editor={editor} />}
       <EditorContent editor={editor} />
     </div>
-  )
+  );
 }
