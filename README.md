@@ -15,12 +15,30 @@ A highly polished, interactive, one-page prototype for an AI-powered email assis
 
 ## Tech Stack
 
-- Next.js 13+ with TypeScript
-- Tailwind CSS for styling
-- TipTap for rich text editing
-- Framer Motion for animations
-- React Hooks for state management
+Based on the files you shared (`package.json`, `next.config.ts`, `tailwind.config.ts`, and `.eslintrc.js`), here’s a detailed breakdown of your **tech stack** and recommendations for your Next.js project:
 
+---
+
+### **Tech Stack Summary**
+
+#### **Core Frameworks**
+- **Next.js**: `15.1.3` (React framework for server-side rendering, static site generation, and API routes).
+- **React**: `^19.0.0` (JavaScript library for building user interfaces).
+- **React DOM**: `^19.0.0` (React renderer for the web).
+
+---
+
+#### **UI and Styling**
+- **Tailwind CSS**: `^3.4.17` (Utility-first CSS framework for styling).
+- **Tailwind Typography**: `@tailwindcss/typography` (Plugin for prose styling).
+- **Heroicons**: `@heroicons/react` (Icon library for React).
+- **Framer Motion**: `^11.15.0` (Animation library for React).
+
+---
+
+#### **Rich Text Editor**
+- **Tiptap**: A headless rich text editor for React.
+  - `@tiptap/react`: Core library
 ## Getting Started
 
 1. Clone the repository
