@@ -18,6 +18,8 @@ git add .
 # Step 5: Commit your changes
 git commit -m "Add new data folder and example file"
 
+git commit -m "partial fix of ui. reply is not rtf. incoming email text area is not well aligned. See UI screenshot: https://github.com/elkholyaa/prototype-ai-pencil/blob/master/docs/localhost-3000.png"
+
 # Step 6: Push the branch to GitHub
 git push origin feature/new-feature
 
