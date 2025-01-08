@@ -6,8 +6,9 @@ import { motion } from 'framer-motion'
 import { SAMPLE_EMAIL } from '@/data/sampleEmail'
 import { SAMPLE_KEY_POINTS } from '@/data/sampleKeyPoints'
 import { SAMPLE_QUESTIONS } from '@/data/sampleQuestions'
+import IncomingEmailArea from '@/components/IncomingEmailArea'
 
-const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), {
+const DraftEmailEditor = dynamic(() => import('@/components/DraftEmailEditor'), {
   ssr: false,
 })
 
@@ -82,16 +83,12 @@ export default function Home() {
               <span>📧</span>
               <h2 className="text-sm font-medium text-gray-700">Incoming Email</h2>
             </div>
-            <span className="text-xs text-gray-400">(Paste email here)</span>
           </div>
-          <div className="bg-gray-700 rounded-lg overflow-hidden">
+          <div className="bg-white rounded-lg shadow-sm">
             <div className="p-4 w-full">
-              <RichTextEditor
+              <IncomingEmailArea
                 content={email}
-                onChange={setEmail}
-                placeholder="Paste your email here..."
-                editable={true}
-                className="text-black leading-relaxed"
+                className="text-gray-700 leading-relaxed"
               />
             </div>
           </div>
@@ -227,14 +224,12 @@ export default function Home() {
                     <h2 className="text-sm font-medium text-gray-700">Draft Reply</h2>
                   </div>
                 </div>
-                <div className="bg-gray-700 rounded-lg overflow-hidden">
+                <div className="bg-white rounded-lg shadow-sm">
                   <div className="p-4 w-full">
-                    <RichTextEditor
+                    <DraftEmailEditor
                       content={reply}
                       onChange={setReply}
-                      editable={true}
-                      placeholder="Generated reply will appear here..."
-                      className="text-black leading-relaxed"
+                      className="text-gray-700 leading-relaxed"
                     />
                   </div>
                 </div>
