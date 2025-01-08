@@ -65,6 +65,8 @@ export default function RichTextEditor({
         <EditorContent 
           editor={editor} 
           placeholder={placeholder}
+          id="rich-text-editor"
+          name="rich-text-editor"
           className="w-full [&_.ProseMirror]:min-h-[180px] [&_.ProseMirror]:px-4 [&_.ProseMirror]:py-3 
                      [&_.ProseMirror]:text-gray-900 [&_.ProseMirror_p]:my-1 
                      [&_.ProseMirror_p:first-child]:mt-0 [&_.ProseMirror_p:last-child]:mb-0

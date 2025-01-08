@@ -53,7 +53,28 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100">
-      <div className="max-w-[1000px] mx-auto py-8 px-4 space-y-6">
+      <style jsx>{`
+        @keyframes write {
+          0% { transform: translateX(-5px) rotate(-10deg); }
+          50% { transform: translateX(5px) rotate(10deg); }
+          100% { transform: translateX(-5px) rotate(-10deg); }
+        }
+        .animate-write {
+          animation: write 1.5s infinite;
+        }
+      `}</style>
+
+      {/* AI Pencil Title Section */}
+      <div className="max-w-[1000px] mx-auto py-6 px-4">
+        <div className="text-center mb-4">
+          <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            AI Pencil
+          </h1>
+          <div className="flex justify-center mt-2">
+            <span className="text-2xl animate-write">✍️</span>
+          </div>
+        </div>
+
         {/* Email Section */}
         <section>
           <div className="flex items-center gap-2 mb-3">
@@ -97,7 +118,7 @@ export default function Home() {
 
         {showResults && (
           <>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6 mt-6">
               {/* Key Points */}
               <section>
                 <div className="flex items-center gap-2 mb-3">
@@ -191,7 +212,7 @@ export default function Home() {
             {/* Generate Button */}
             <button
               onClick={generateReply}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors mt-6"
             >
               <span>✍️</span>
               Generate Reply
@@ -199,7 +220,7 @@ export default function Home() {
 
             {/* Reply Section */}
             {reply && (
-              <section>
+              <section className="mt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex items-center gap-2">
                     <span>✏️</span>
