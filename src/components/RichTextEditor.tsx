@@ -39,6 +39,7 @@ export default function RichTextEditor({
     extensions: [StarterKit],
     content: formatContent(content),
     editable,
+    immediatelyRender: false,
     onUpdate: ({ editor }: { editor: Editor }) => {
       onChange(editor.getHTML())
     },
