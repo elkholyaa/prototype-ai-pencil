@@ -36,9 +36,7 @@ export default function RichTextEditor({
   className?: string
 }) {
   const editor = useEditor({
-    extensions: [
-      StarterKit,
-    ],
+    extensions: [StarterKit],
     content: formatContent(content),
     editable,
     onUpdate: ({ editor }: { editor: Editor }) => {
@@ -46,7 +44,7 @@ export default function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: `prose prose-sm focus:outline-none w-full min-h-[100px] ${className || ''}`,
+        class: `prose prose-sm max-w-none focus:outline-none ${className || ''}`,
       },
     },
   })
@@ -61,12 +59,17 @@ export default function RichTextEditor({
   }, [content, editor])
 
   return (
-    <div className="w-full [&_.ProseMirror]:w-full [&_.ProseMirror]:min-h-[180px] [&_.ProseMirror]:p-0">
-      <EditorContent 
-        editor={editor} 
-        placeholder={placeholder}
-        className="w-full"
-      />
+    <div className="relative w-full rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="mx-auto w-full overflow-hidden">
+        <EditorContent 
+          editor={editor} 
+          placeholder={placeholder}
+          className="w-full [&_.ProseMirror]:min-h-[180px] [&_.ProseMirror]:px-4 [&_.ProseMirror]:py-3 
+                     [&_.ProseMirror]:text-gray-900 [&_.ProseMirror_p]:my-1 
+                     [&_.ProseMirror_p:first-child]:mt-0 [&_.ProseMirror_p:last-child]:mb-0
+                     [&_.ProseMirror:focus]:outline-none [&_.ProseMirror]:leading-relaxed"
+        />
+      </div>
     </div>
   )
 }
