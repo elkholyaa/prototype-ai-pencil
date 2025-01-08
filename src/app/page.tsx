@@ -13,7 +13,7 @@ const DraftEmailEditor = dynamic(() => import('@/components/DraftEmailEditor'), 
 })
 
 export default function Home() {
-  const [email, setEmail] = useState(SAMPLE_EMAIL.body)
+  const [email] = useState(SAMPLE_EMAIL.body)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([])
