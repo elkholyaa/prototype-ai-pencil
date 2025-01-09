@@ -1,12 +1,34 @@
 'use client'
 
-import { useEffect } from 'react'
-import { EditorContent, useEditor } from '@tiptap/react'
+import React, { useEffect } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Editor } from '@tiptap/core'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
+
+const formatContent = (content: string) => {
+  // Convert markdown to HTML
+  let html = content
+
+  // Bold text
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+  
+  // Italic text
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>')
+  
+  // Convert line breaks to paragraphs if content isn't already HTML
+  if (!html.includes('</p>')) {
+    html = html
+      .split(/\n\s*\n/) // Split on empty lines
+      .map(para => para.trim())
+      .filter(para => para.length > 0)
+      .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+      .join('')
+  }
+  
+  return html
+}
 
 const MenuButton = ({ 
   onClick, 
@@ -29,19 +51,13 @@ const MenuButton = ({
   </button>
 )
 
-export default function DraftEmailEditor({
-  content,
-  onChange,
-  placeholder = 'Type your reply here...',
-  editable = true,
-  className,
-}: {
+interface DraftEmailEditorProps {
   content: string
   onChange: (content: string) => void
-  placeholder?: string
-  editable?: boolean
   className?: string
-}) {
+}
+
+const DraftEmailEditor: React.FC<DraftEmailEditorProps> = ({ content, onChange, className }) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -54,12 +70,11 @@ export default function DraftEmailEditor({
         types: ['paragraph'],
       }),
       Placeholder.configure({
-        placeholder,
+        placeholder: 'Type your reply here...',
       }),
     ],
-    content,
-    editable,
-    onUpdate: ({ editor }: { editor: Editor }) => {
+    content: formatContent(content),
+    onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },
     editorProps: {
@@ -72,7 +87,7 @@ export default function DraftEmailEditor({
   useEffect(() => {
     if (editor && !editor.isDestroyed) {
       if (content !== editor.getHTML()) {
-        editor.commands.setContent(content)
+        editor.commands.setContent(formatContent(content))
       }
     }
   }, [content, editor])
@@ -82,7 +97,7 @@ export default function DraftEmailEditor({
   }
 
   return (
-    <div className="relative w-full rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="w-full">
       <div className="border-b border-gray-200 bg-gray-50 px-3 py-1.5 flex flex-wrap items-center gap-0.5">
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -160,20 +175,18 @@ export default function DraftEmailEditor({
         </MenuButton>
       </div>
 
-      <div className="mx-auto w-full overflow-hidden">
-        <EditorContent 
-          editor={editor} 
-          id="draft-email-editor"
-          name="draft-email-editor"
-          className="w-full [&_.ProseMirror]:min-h-[400px] [&_.ProseMirror]:px-4 [&_.ProseMirror]:py-3 
-                     [&_.ProseMirror]:text-gray-900 [&_.ProseMirror_p]:my-1 
-                     [&_.ProseMirror_p:first-child]:mt-0 [&_.ProseMirror_p:last-child]:mb-0
-                     [&_.ProseMirror]:text-base [&_.ProseMirror]:leading-relaxed
-                     [&_.ProseMirror:focus]:outline-none
-                     [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-4
-                     [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-4"
-        />
-      </div>
+      <EditorContent 
+        editor={editor}
+        className="w-full [&_.ProseMirror]:min-h-[300px] [&_.ProseMirror]:px-4 [&_.ProseMirror]:py-3 
+                   [&_.ProseMirror]:text-gray-900 [&_.ProseMirror_p]:my-1 
+                   [&_.ProseMirror_p:first-child]:mt-0 [&_.ProseMirror_p:last-child]:mb-0
+                   [&_.ProseMirror]:text-base [&_.ProseMirror]:leading-relaxed
+                   [&_.ProseMirror:focus]:outline-none
+                   [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-4
+                   [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-4"
+      />
     </div>
   )
-} 
+}
+
+export default DraftEmailEditor
