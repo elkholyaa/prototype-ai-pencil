@@ -1,8 +1,14 @@
 'use client'
 
 const formatContent = (content: string) => {
-  // First convert markdown to HTML
-  let html = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+  // Convert markdown to HTML
+  let html = content
+
+  // Bold text
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+  
+  // Italic text
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>')
   
   // Convert line breaks to paragraphs if content isn't already HTML
   if (!html.includes('</p>')) {
@@ -17,18 +23,18 @@ const formatContent = (content: string) => {
   return html
 }
 
-export default function IncomingEmailArea({
-  content,
-  className,
-}: {
+interface IncomingEmailAreaProps {
   content: string
   className?: string
-}) {
+}
+
+const IncomingEmailArea: React.FC<IncomingEmailAreaProps> = ({ content, className }) => {
   return (
-    <div 
-      className={`w-full rounded-lg border border-gray-200 bg-white shadow-sm overflow-auto
-                  prose prose-sm max-w-none px-4 py-3 min-h-[400px] text-base leading-relaxed ${className || ''}`}
+    <div
+      className={`prose prose-sm max-w-none ${className || ''}`}
       dangerouslySetInnerHTML={{ __html: formatContent(content) }}
     />
   )
-} 
+}
+
+export default IncomingEmailArea

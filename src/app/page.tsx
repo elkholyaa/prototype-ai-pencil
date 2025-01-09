@@ -7,12 +7,14 @@ import { SAMPLE_EMAIL } from '@/data/sampleEmail'
 import { SAMPLE_KEY_POINTS } from '@/data/sampleKeyPoints'
 import { SAMPLE_QUESTIONS } from '@/data/sampleQuestions'
 import IncomingEmailArea from '@/components/IncomingEmailArea'
+import QuestionsSection from '@/components/QuestionsSection'
+import KeyPointsSection from '@/components/KeyPointsSection'
 
 const DraftEmailEditor = dynamic(() => import('@/components/DraftEmailEditor'), {
   ssr: false,
 })
 
-export default function Home() {
+export default function HomePage() {
   const [email] = useState(SAMPLE_EMAIL.body)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [showResults, setShowResults] = useState(false)
@@ -115,95 +117,119 @@ export default function Home() {
 
         {showResults && (
           <>
-            <div className="grid grid-cols-2 gap-6 mt-6">
-              {/* Key Points */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <span>🔍</span>
-                  <h2 className="text-sm font-medium text-gray-700">Key Points</h2>
+            <div className="grid grid-cols-2 gap-8 mt-6">
+              {/* Key Points Container */}
+              <div className="bg-white rounded-lg border-[4px] border-blue-500 shadow-2xl overflow-hidden">
+                <div className="bg-blue-50 border-b-[3px] border-blue-500 px-4 py-2">
+                  <h2 className="text-sm font-medium text-blue-700 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Key Points
+                  </h2>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm">
-                  <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
+                <div className="p-4">
+                  <div className="space-y-3">
                     {SAMPLE_KEY_POINTS.map((point, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2, delay: index * 0.05 }}
-                        className="p-3 bg-gray-50 rounded"
+                        className="p-3 bg-gray-50 rounded-lg border border-gray-200 flex items-center"
                       >
-                        <p 
-                          className="text-sm text-gray-600"
-                          dangerouslySetInnerHTML={{
-                            __html: point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                          }}
+                        <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <div 
+                          className="prose prose-sm max-w-none text-gray-700"
+                          dangerouslySetInnerHTML={{ __html: point }}
                         />
                       </motion.div>
                     ))}
                   </div>
                 </div>
-              </section>
+              </div>
 
-              {/* Questions */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <span>❓</span>
-                  <h2 className="text-sm font-medium text-gray-700">Questions</h2>
+              {/* Questions Container */}
+              <div className="bg-white rounded-lg border-[4px] border-purple-500 shadow-2xl overflow-hidden">
+                <div className="bg-purple-50 border-b-[3px] border-purple-500 px-4 py-2">
+                  <h2 className="text-sm font-medium text-purple-700 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Questions
+                  </h2>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm">
-                  <div className="p-4 space-y-4 max-h-[400px] overflow-y-auto">
+                <div className="p-4">
+                  <div className="space-y-3">
                     {SAMPLE_QUESTIONS.map((q, qIndex) => (
-                      <motion.div
-                        key={qIndex}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2, delay: qIndex * 0.05 }}
-                        className="space-y-2"
-                      >
-                        <p className="text-sm font-medium text-gray-700">{q.question}</p>
-                        <div className="space-y-2">
-                          {q.suggestions.map((suggestion, sIndex) => (
-                            <button
-                              key={sIndex}
-                              onClick={() => {
-                                const newAnswers = [...selectedAnswers]
-                                newAnswers[qIndex] = suggestion
-                                setSelectedAnswers(newAnswers)
-                                const newIsCustom = [...isCustomAnswer]
-                                newIsCustom[qIndex] = false
-                                setIsCustomAnswer(newIsCustom)
-                              }}
-                              className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
-                                selectedAnswers[qIndex] === suggestion && !isCustomAnswer[qIndex]
-                                  ? 'bg-blue-600 text-white'
-                                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                              }`}
-                            >
-                              {suggestion}
-                            </button>
-                          ))}
-                          <input
-                            type="text"
-                            placeholder="Or type a custom answer..."
-                            value={customAnswers[qIndex] || ''}
-                            onChange={(e) => {
-                              const newCustomAnswers = [...customAnswers]
-                              newCustomAnswers[qIndex] = e.target.value
-                              setCustomAnswers(newCustomAnswers)
-                              if (e.target.value) {
-                                const newIsCustom = [...isCustomAnswer]
-                                newIsCustom[qIndex] = true
-                                setIsCustomAnswer(newIsCustom)
-                              }
-                            }}
-                            className="w-full px-3 py-2 text-sm bg-gray-50 text-gray-700 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                      </motion.div>
+                      <div key={qIndex} className="bg-gray-50 rounded-lg border border-gray-200">
+                        <button
+                          onClick={() => {
+                            const newIsCustom = [...isCustomAnswer]
+                            newIsCustom[qIndex] = !newIsCustom[qIndex]
+                            setIsCustomAnswer(newIsCustom)
+                          }}
+                          className="w-full text-left p-3 flex justify-between items-center"
+                        >
+                          <div className="flex items-center">
+                            <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-gray-700">{q.question}</span>
+                          </div>
+                          <svg className={`w-5 h-5 text-gray-500 transition-transform ${isCustomAnswer[qIndex] ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {isCustomAnswer[qIndex] && (
+                          <div className="p-3 pt-0 space-y-2">
+                            {q.suggestions.map((suggestion, sIndex) => (
+                              <button
+                                key={sIndex}
+                                onClick={() => {
+                                  const newAnswers = [...selectedAnswers]
+                                  newAnswers[qIndex] = suggestion
+                                  setSelectedAnswers(newAnswers)
+                                }}
+                                className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+                                  selectedAnswers[qIndex] === suggestion
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                                }`}
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                            <div className="mt-3 pt-3 border-t border-gray-200">
+                              <input
+                                type="text"
+                                placeholder="Or type a custom answer..."
+                                value={customAnswers[qIndex] || ''}
+                                onChange={(e) => {
+                                  const newCustomAnswers = [...customAnswers]
+                                  newCustomAnswers[qIndex] = e.target.value
+                                  setCustomAnswers(newCustomAnswers)
+                                  if (e.target.value) {
+                                    const newIsCustom = [...isCustomAnswer]
+                                    newIsCustom[qIndex] = true
+                                    setIsCustomAnswer(newIsCustom)
+                                    const newAnswers = [...selectedAnswers]
+                                    newAnswers[qIndex] = ''
+                                    setSelectedAnswers(newAnswers)
+                                  }
+                                }}
+                                className="w-full px-3 py-2 text-sm bg-white text-gray-700 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
-              </section>
+              </div>
             </div>
 
             {/* Generate Button */}
@@ -224,14 +250,11 @@ export default function Home() {
                     <h2 className="text-sm font-medium text-gray-700">Draft Reply</h2>
                   </div>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm">
-                  <div className="p-4 w-full">
-                    <DraftEmailEditor
-                      content={reply}
-                      onChange={setReply}
-                      className="text-gray-700 leading-relaxed"
-                    />
-                  </div>
+                <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <DraftEmailEditor
+                    content={reply}
+                    onChange={setReply}
+                  />
                 </div>
                 <div className="flex gap-3 mt-3">
                   <button
