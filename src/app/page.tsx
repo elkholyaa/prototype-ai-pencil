@@ -8,7 +8,6 @@ import { SAMPLE_KEY_POINTS } from '@/data/sampleKeyPoints'
 import { SAMPLE_QUESTIONS } from '@/data/sampleQuestions'
 import IncomingEmailArea from '@/components/IncomingEmailArea'
 import QuestionsSection from '@/components/QuestionsSection'
-import KeyPointsSection from '@/components/KeyPointsSection'
 
 const DraftEmailEditor = dynamic(() => import('@/components/DraftEmailEditor'), {
   ssr: false,
@@ -163,70 +162,35 @@ export default function HomePage() {
                 </div>
                 <div className="p-4">
                   <div className="space-y-3">
-                    {SAMPLE_QUESTIONS.map((q, qIndex) => (
-                      <div key={qIndex} className="bg-gray-50 rounded-lg border border-gray-200">
-                        <button
-                          onClick={() => {
-                            const newIsCustom = [...isCustomAnswer]
-                            newIsCustom[qIndex] = !newIsCustom[qIndex]
-                            setIsCustomAnswer(newIsCustom)
-                          }}
-                          className="w-full text-left p-3 flex justify-between items-center"
-                        >
-                          <div className="flex items-center">
-                            <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-gray-700">{q.question}</span>
-                          </div>
-                          <svg className={`w-5 h-5 text-gray-500 transition-transform ${isCustomAnswer[qIndex] ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        {isCustomAnswer[qIndex] && (
-                          <div className="p-3 pt-0 space-y-2">
-                            {q.suggestions.map((suggestion, sIndex) => (
-                              <button
-                                key={sIndex}
-                                onClick={() => {
-                                  const newAnswers = [...selectedAnswers]
-                                  newAnswers[qIndex] = suggestion
-                                  setSelectedAnswers(newAnswers)
-                                }}
-                                className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${
-                                  selectedAnswers[qIndex] === suggestion
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                                }`}
-                              >
-                                {suggestion}
-                              </button>
-                            ))}
-                            <div className="mt-3 pt-3 border-t border-gray-200">
-                              <input
-                                type="text"
-                                placeholder="Or type a custom answer..."
-                                value={customAnswers[qIndex] || ''}
-                                onChange={(e) => {
-                                  const newCustomAnswers = [...customAnswers]
-                                  newCustomAnswers[qIndex] = e.target.value
-                                  setCustomAnswers(newCustomAnswers)
-                                  if (e.target.value) {
-                                    const newIsCustom = [...isCustomAnswer]
-                                    newIsCustom[qIndex] = true
-                                    setIsCustomAnswer(newIsCustom)
-                                    const newAnswers = [...selectedAnswers]
-                                    newAnswers[qIndex] = ''
-                                    setSelectedAnswers(newAnswers)
-                                  }
-                                }}
-                                className="w-full px-3 py-2 text-sm bg-white text-gray-700 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                    <QuestionsSection
+                      questions={SAMPLE_QUESTIONS}
+                      selectedAnswers={selectedAnswers}
+                      customAnswers={customAnswers}
+                      isCustomAnswer={isCustomAnswer}
+                      onSelectAnswer={(qIndex, suggestion) => {
+                        const newAnswers = [...selectedAnswers]
+                        newAnswers[qIndex] = suggestion
+                        setSelectedAnswers(newAnswers)
+                      }}
+                      onCustomAnswerChange={(qIndex, value) => {
+                        const newCustomAnswers = [...customAnswers]
+                        newCustomAnswers[qIndex] = value
+                        setCustomAnswers(newCustomAnswers)
+                        if (value) {
+                          const newIsCustom = [...isCustomAnswer]
+                          newIsCustom[qIndex] = true
+                          setIsCustomAnswer(newIsCustom)
+                          const newAnswers = [...selectedAnswers]
+                          newAnswers[qIndex] = ''
+                          setSelectedAnswers(newAnswers)
+                        }
+                      }}
+                      onToggleCustom={(qIndex, isCustom) => {
+                        const newIsCustom = [...isCustomAnswer]
+                        newIsCustom[qIndex] = isCustom
+                        setIsCustomAnswer(newIsCustom)
+                      }}
+                    />
                   </div>
                 </div>
               </div>

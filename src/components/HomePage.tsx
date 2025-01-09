@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { motion } from 'framer-motion'
 import { SAMPLE_EMAIL } from '@/data/sampleEmail'
 import { SAMPLE_KEY_POINTS } from '@/data/sampleKeyPoints'
 import { SAMPLE_QUESTIONS } from '@/data/sampleQuestions'
