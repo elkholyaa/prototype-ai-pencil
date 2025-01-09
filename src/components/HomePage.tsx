@@ -130,9 +130,6 @@ export default function HomePage() {
                   const newAnswers = [...selectedAnswers]
                   newAnswers[qIndex] = suggestion
                   setSelectedAnswers(newAnswers)
-                  const newIsCustom = [...isCustomAnswer]
-                  newIsCustom[qIndex] = false
-                  setIsCustomAnswer(newIsCustom)
                 }}
                 onCustomAnswerChange={(qIndex, value) => {
                   const newCustomAnswers = [...customAnswers]
@@ -143,6 +140,11 @@ export default function HomePage() {
                     newIsCustom[qIndex] = true
                     setIsCustomAnswer(newIsCustom)
                   }
+                }}
+                onToggleCustom={(qIndex, isCustom) => {
+                  const newIsCustom = [...isCustomAnswer]
+                  newIsCustom[qIndex] = isCustom
+                  setIsCustomAnswer(newIsCustom)
                 }}
               />
             </div>
